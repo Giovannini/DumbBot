@@ -1,10 +1,9 @@
-import akka.actor.{ActorRef, ActorContext, ActorSystem, Props}
-import io.scalac.slack.bots.system.{HelpBot, CommandsRecognizerBot}
-import io.scalac.slack.{BotModules, Config, MessageEventBus}
+import akka.actor.{ActorContext, ActorRef, ActorSystem, Props}
 import io.scalac.slack.api.{BotInfo, Start}
 import io.scalac.slack.common.Shutdownable
 import io.scalac.slack.common.actors.SlackBotActor
 import io.scalac.slack.websockets.WebSocket
+import io.scalac.slack.{BotModules, Config, MessageEventBus}
 
 object BotRunner extends Shutdownable {
   val system = ActorSystem("SlackBotSystem")
