@@ -1,5 +1,6 @@
 package bots
 
+import commands.{Profile, UserCreated}
 import io.scalac.slack.MessageEventBus
 import io.scalac.slack.bots.AbstractBot
 import io.scalac.slack.common.{BaseMessage, Command, OutboundMessage, UndefinedMessage}
@@ -14,16 +15,21 @@ class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
 
   val Mention = """<@([A-Z0-9]+)>""".r
 
+  //TODO persist that map
+  private val usersMap: collection.mutable.Map[String, Profile] = collection.mutable.Map()
+
   //Command's names
 
   override def act: Receive = {
     case Command("skill", params, bm) =>
       handleSkillCommand(params, bm)
+    case UserCreated(userId, _, profile) => //TODO handle UserDeleted
+      usersMap.put(userId, profile)
     case bm@BaseMessage(text, channel, user, dateTime, edited) if text startsWith  s"<@$id>" =>
       val args = text.substring(s"<@$id> ".length).split(" ")
       val response = args.headOption.fold(
-        OutboundMessage(channel, s"Why are you talking to me privatly $user?")
-      )(subject => OutboundMessage(channel, s"So you want to know about '$subject', $user?"))
+        OutboundMessage(channel, s"Why are you talking to me privatly ${ getUser(user) }?")
+      )(subject => OutboundMessage(channel, s"So you want to know about '$subject', ${ getUser(user) }?"))
       publish(response)
     case um@UndefinedMessage(s) =>
     //TODO deal with created channel message
@@ -33,11 +39,13 @@ class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
     //TODO handle created users
   }
 
+  private def getUser(user: String) = usersMap.get(user).map(_.firstName).getOrElse(user)
+
   def handleSkillCommand(params: List[String], bm: BaseMessage) = params match{
     case Nil =>
       publish(OutboundMessage(bm.channel, s"Please tell me what skill you want to know about"))
     case Mention(user)::tail =>
-      publish(OutboundMessage(bm.channel, s"You want to know $user's skills."))
+      publish(OutboundMessage(bm.channel, s"You want to know ${ getUser(user) }'s skills."))
     case skill::tail => publish(OutboundMessage(bm.channel, s"You want to know about skill '$skill' in the group."))
 
   }
