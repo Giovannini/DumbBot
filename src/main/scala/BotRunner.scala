@@ -5,6 +5,7 @@ import io.scalac.slack.common.Shutdownable
 import io.scalac.slack.common.actors.SlackBotActor
 import io.scalac.slack.websockets.WebSocket
 import io.scalac.slack.{BotModules, MessageEventBus}
+import models.UserStorage
 
 
 object BotRunner extends Shutdownable {
@@ -36,10 +37,12 @@ object BotRunner extends Shutdownable {
   }
 
   class ExampleBotsBundle() extends BotModules {
+    val userStorage = UserStorage.load
     override def registerModules(context: ActorContext, websocketClient: ActorRef) = {
       context.actorOf(Props(classOf[RecognizerBot], eventBus), "recognizerBot")
-      context.actorOf(Props(classOf[DumbBot], eventBus), "DumbBot")
+      context.actorOf(Props(classOf[DumbBot], eventBus, userStorage), "DumbBot")
     }
   }
+
 }
 

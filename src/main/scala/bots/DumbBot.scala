@@ -1,13 +1,15 @@
 package bots
 
-import commands.{Profile, UserCreated}
+import commands.UserCreated
 import io.scalac.slack.MessageEventBus
 import io.scalac.slack.bots.AbstractBot
 import io.scalac.slack.common.{BaseMessage, Command, OutboundMessage, UndefinedMessage}
+import models.{User, UserStorage}
 
-class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
+class DumbBot(override val bus: MessageEventBus, _userStorage: UserStorage) extends AbstractBot {
 
   val id = "U0K07KRPY"
+  var storage = _userStorage //TODO find a cleaner way to do that
 
   override def help(channel: String): OutboundMessage =
     OutboundMessage(channel,
@@ -15,18 +17,14 @@ class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
 
   val Mention = """<@([A-Z0-9]+)>""".r
 
-  //TODO persist that map
-  private val usersMap: collection.mutable.Map[String, Profile] = collection.mutable.Map()
-
   //Command's names
 
   override def act: Receive = {
     case Command("skill", params, bm) =>
       handleSkillCommand(params, bm)
-    case UserCreated(userId, _, profile) => //TODO handle UserDeleted
-      usersMap.put(userId, profile)
+    case UserCreated(user) => save(user) //TODO handle UserDeleted
     case bm@BaseMessage(text, channel, user, dateTime, edited) if text startsWith  s"<@$id>" =>
-      val args = text.substring(s"<@$id> ".length).split(" ")
+      val args = text.substring(s"<@$id>".length).trim.split(" ")
       val response = args.headOption.fold(
         OutboundMessage(channel, s"Why are you talking to me privatly ${ getUser(user) }?")
       )(subject => OutboundMessage(channel, s"So you want to know about '$subject', ${ getUser(user) }?"))
@@ -39,7 +37,10 @@ class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
     //TODO handle created users
   }
 
-  private def getUser(user: String) = usersMap.get(user).map(_.firstName).getOrElse(user)
+  private def getUser(user: String) = storage.find(user).map(_.firstName).getOrElse(user)
+  private def save(user: User) = {
+    storage = storage.save(user)
+  }
 
   def handleSkillCommand(params: List[String], bm: BaseMessage) = params match{
     case Nil =>
@@ -47,6 +48,5 @@ class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
     case Mention(user)::tail =>
       publish(OutboundMessage(bm.channel, s"You want to know ${ getUser(user) }'s skills."))
     case skill::tail => publish(OutboundMessage(bm.channel, s"You want to know about skill '$skill' in the group."))
-
   }
 }

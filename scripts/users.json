@@ -1,0 +1,52 @@
+{
+  "users": [
+    {
+      "name": "arnaudh",
+      "slackId": "U0JTYKHUG",
+      "first_name": "Arnaud",
+      "last_name": "Hurel",
+      "email": "hurelarnau@eisti.eu"
+    },
+    {
+      "name": "geoffroy",
+      "slackId": "U0K5U0QMU",
+      "first_name": "Geoffroy",
+      "last_name": "Dubourg-Felloneau",
+      "email": "nycgdf@gmail.com"
+    },
+    {
+      "name": "julien",
+      "slackId": "U0JUTHKRR",
+      "first_name": "Julien",
+      "last_name": "Pradet",
+      "email": "julien.pradet@gmail.com"
+    },
+    {
+      "name": "kivi",
+      "slackId": "U0JTV7K25",
+      "first_name": "Kevin",
+      "last_name": "Razavet",
+      "email": "kevin.razavet@gmail.com"
+    },
+    {
+      "name": "mael",
+      "slackId": "U0K5WDCDU",
+      "first_name": "Mael",
+      "last_name": "Razavet",
+      "email": "mael.razavet@gmail.com"
+    },
+    {
+      "name": "thomas",
+      "slackId": "U0JTSDAAH",
+      "first_name": "Thomas",
+      "last_name": "Giovannini",
+      "email": "giovannini.thomas@gmail.com"
+    },
+    {
+      "name": "reco",
+      "slackId": "U0K07KRPY",
+      "first_name": "Reco",
+      "last_name": "Bot"
+    }
+  ]
+}
