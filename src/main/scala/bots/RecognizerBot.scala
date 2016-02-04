@@ -10,7 +10,6 @@ class RecognizerBot(override val bus: MessageEventBus) extends IncomingMessageLi
   def receive: Receive = {
     case bm@BaseMessage(text, channel, user, dateTime, edited) if isCommand(text)=>
       changeIntoCommand(text, bm)
-
   }
 
   //Command

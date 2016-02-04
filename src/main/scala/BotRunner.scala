@@ -6,6 +6,8 @@ import io.scalac.slack.common.actors.SlackBotActor
 import io.scalac.slack.websockets.WebSocket
 import io.scalac.slack.{BotModules, MessageEventBus}
 
+import scala.util.{Failure, Success, Try}
+
 
 object BotRunner extends Shutdownable {
   val system = ActorSystem("SlackBotSystem")
@@ -16,6 +18,11 @@ object BotRunner extends Shutdownable {
   def main(args: Array[String]) {
     try {
       slackBot ! Start
+
+      Try(scala.io.Source.fromFile("src/main/resources/token").getLines.reduceLeft(_+_)) match {
+        case Success(token) => println(s"Using existing token $token")
+        case Failure(err) => linkedin.Api.goOAuth
+      }
 
       system.awaitTermination()
       println("Shutdown successful...")

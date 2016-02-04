@@ -4,6 +4,8 @@ import io.scalac.slack.MessageEventBus
 import io.scalac.slack.bots.AbstractBot
 import io.scalac.slack.common.{BaseMessage, Command, OutboundMessage, UndefinedMessage}
 
+
+
 class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
 
   val id = "U0K07KRPY"
@@ -17,6 +19,7 @@ class DumbBot(override val bus: MessageEventBus) extends AbstractBot {
   //Command's names
 
   override def act: Receive = {
+    case Test => println("YOOOOOOOOOOOOO")
     case Command("skill", params, bm) =>
       handleSkillCommand(params, bm)
     case bm@BaseMessage(text, channel, user, dateTime, edited) if text startsWith  s"<@$id>" =>
